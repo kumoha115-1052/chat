@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172554">
+  <title>Friends Board</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" id="brand-home"><span class="brand-mark">F</span><span>Friends Board</span></a>
+      <div class="topbar-right">
+        <span id="current-user" class="muted small"></span>
+        <button id="logout-button" class="button button-quiet hidden">ログアウト</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="auth-view" class="auth-layout">
+        <div class="auth-intro">
+          <p class="eyebrow">PRIVATE COMMUNITY</p>
+          <h1>友達だけの、<br>小さな掲示板。</h1>
+          <p class="muted">招待されたメンバーだけが参加できるスレッド型掲示板です。</p>
+        </div>
+        <div class="panel auth-panel">
+          <div class="tab-row">
+            <button id="login-tab" class="tab active">ログイン</button>
+            <button id="signup-tab" class="tab">新規登録</button>
+          </div>
+          <form id="auth-form">
+            <label id="email-label" for="email">メールアドレス</label>
+            <input id="email" type="email" autocomplete="email" required placeholder="name@example.com">
+            <label for="password">パスワード</label>
+            <input id="password" type="password" minlength="8" autocomplete="current-password" required placeholder="8文字以上">
+            <div id="invite-field" class="hidden">
+              <label for="invite-code">招待コード</label>
+              <input id="invite-code" type="text" autocomplete="off" placeholder="招待コードを入力">
+            </div>
+            <button id="auth-submit" class="button button-primary button-full" type="submit">ログイン</button>
+          </form>
+          <p id="auth-message" class="message" role="status"></p>
+          <p class="tiny muted">この掲示板は招待制です。登録後、メール確認が必要な場合があります。</p>
+        </div>
+      </section>
+
+      <section id="board-view" class="board-layout hidden">
+        <aside class="sidebar panel">
+          <div class="sidebar-heading">MENU</div>
+          <button class="nav-item active" data-view="threads"> <span>▤</span> スレッド</button>
+          <button class="nav-item" data-view="members"><span>♙</span> メンバー</button>
+          <div class="sidebar-bottom">
+            <div class="profile-chip"><span class="avatar" id="my-avatar">?</span><span><b id="my-name">メンバー</b><small id="my-role">Member</small></span></div>
+            <button id="settings-button" class="nav-item" data-view="settings"><span>⚙</span> 設定</button>
+          </div>
+        </aside>
+
+        <section class="content-area">
+          <div id="threads-view">
+            <div class="page-heading">
+              <div><p class="eyebrow">COMMUNITY</p><h1>スレッド</h1><p class="muted">友達との話題を共有しましょう。</p></div>
+              <button id="new-thread-button" class="button button-primary">＋ スレッドを作成</button>
+            </div>
+            <div class="toolbar">
+              <input id="search-input" type="search" placeholder="スレッドを検索">
+              <select id="sort-select" aria-label="並び替え"><option value="new">新着順</option><option value="replies">返信数順</option></select>
+            </div>
+            <div id="thread-list" class="thread-list"></div>
+          </div>
+
+          <div id="detail-view" class="hidden">
+            <button id="back-to-threads" class="back-link">← スレッド一覧に戻る</button>
+            <div id="thread-detail"></div>
+          </div>
+
+          <div id="members-view" class="hidden">
+            <div class="page-heading"><div><p class="eyebrow">COMMUNITY</p><h1>メンバー</h1><p class="muted">この掲示板に参加しているメンバーです。</p></div></div>
+            <div id="member-list" class="member-grid"></div>
+            <div id="invite-admin" class="panel admin-panel hidden">
+              <div><h2>招待コードを発行</h2><p class="muted small">コードは一度だけ使用できます。</p></div>
+              <button id="create-invite-button" class="button button-primary">コードを発行</button>
+              <p id="invite-result" class="message"></p>
+            </div>
+          </div>
+
+          <div id="settings-view" class="hidden">
+            <div class="page-heading"><div><p class="eyebrow">ACCOUNT</p><h1>設定</h1></div></div>
+            <div class="panel settings-panel">
+              <h2>アカウント</h2>
+              <p><span class="muted">メールアドレス</span><br><b id="settings-email"></b></p>
+              <p><span class="muted">表示名</span></p>
+              <form id="profile-form" class="inline-form">
+                <input id="display-name-input" maxlength="30" placeholder="表示名">
+                <button class="button button-secondary" type="submit">保存</button>
+              </form>
+              <p id="profile-message" class="message"></p>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="thread-dialog" class="modal">
+    <form id="thread-form" method="dialog">
+      <div class="modal-heading"><h2>スレッドを作成</h2><button type="button" class="icon-button" data-close="thread-dialog" aria-label="閉じる">×</button></div>
+      <label for="thread-title">タイトル</label>
+      <input id="thread-title" maxlength="100" required placeholder="話題のタイトル">
+      <label for="thread-body">本文</label>
+      <textarea id="thread-body" rows="6" maxlength="5000" required placeholder="内容を書いてください"></textarea>
+      <div class="modal-actions"><button type="button" class="button button-quiet" data-close="thread-dialog">キャンセル</button><button class="button button-primary" type="submit">作成する</button></div>
+      <p id="thread-form-message" class="message"></p>
+    </form>
+  </dialog>
+
+  <dialog id="reply-dialog" class="modal">
+    <form id="reply-form" method="dialog">
+      <div class="modal-heading"><h2>返信する</h2><button type="button" class="icon-button" data-close="reply-dialog" aria-label="閉じる">×</button></div>
+      <label for="reply-body">本文</label>
+      <textarea id="reply-body" rows="5" maxlength="3000" required placeholder="返信を書いてください"></textarea>
+      <div class="modal-actions"><button type="button" class="button button-quiet" data-close="reply-dialog">キャンセル</button><button class="button button-primary" type="submit">投稿する</button></div>
+      <p id="reply-form-message" class="message"></p>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
